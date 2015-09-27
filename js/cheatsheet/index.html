@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>Bonsai Cheat sheet</title>
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+
+  <h1></h1>
+
+  <input id="search"/>
+  <button id="compactButton">compact on/off</button>
+  <div id="tagCloud"></div>
+  <div id="cheatsheet"></div>
+
+  <script src="../lib/requirejs/require.js"></script>
+  <script src="../lib/marked/marked.js"></script>
+  <script>
+    require.config({
+      baseUrl: '.'
+    });
+    require([
+      './util.js',
+      './sheet.js'
+    ], function(util, sheet){
+
+      var byId = function (id) { return document.getElementById(id); };
+
+      util.xhr('./cheatsheet.md', function(data){
+        sheet.init(byId('cheatsheet'), data);
+      });
+
+      var lastSearch = '';
+      byId('search').addEventListener('keyup', function(evt){
+        sheet.filter(lastSearch = evt.target.value);
+      });
+      byId('compactButton').addEventListener('click', function(evt){
+        sheet.options.showCodeOnly = !sheet.options.showCodeOnly;
+        sheet.filter(lastSearch);
+      });
+
+//      document.getElementById('tagCloud').addEventListener('click', function(evt){
+//        sheet.filter([evt.target.dataset.stats]);
+//      });
+    });
+  </script>
+</body>
+</html>
